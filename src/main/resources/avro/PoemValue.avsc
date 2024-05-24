@@ -1,0 +1,12 @@
+{
+  "namespace": "com.wchamara.confluentkafkaspringapp.dto",
+  "type": "record",
+  "name": "PoemValue",
+  "fields": [
+    {
+      "name": "title",
+      "type": "string",
+      "doc": "Title of the poem"
+    }
+  ]
+}
