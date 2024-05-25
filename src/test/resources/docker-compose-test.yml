@@ -1,0 +1,65 @@
+# FILEPATH: /c:/Users/USER/Documents/GitHub/confluent-testing/manual-typing/docker-compose.yml
+
+# Docker Compose version
+version: '3.9'
+
+# Define services
+services:
+  # Kafka broker service
+  broker:
+    # Docker image for Kafka broker
+    image: confluentinc/cp-kafka:7.6.1
+    # Hostname for the broker container
+    hostname: broker
+    # Port mappings for Kafka and JMX
+    ports:
+      - "9092:9092" # Kafka port
+      - "9101:9101" # JMX port
+    # Environment variables for Kafka broker configuration
+    environment:
+      # Kafka broker node ID
+      KAFKA_NODE_ID: 1
+      # Kafka listener security protocol map
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      # Kafka advertised listeners
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092'
+      # Kafka offsets topic replication factor
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # Kafka group initial rebalance delay
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      # Kafka transaction state log minimum ISR
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Kafka transaction state log replication factor
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # Kafka JMX port
+      KAFKA_JMX_PORT: 9101
+      # Kafka JMX hostname
+      KAFKA_JMX_HOSTNAME: localhost
+      # Kafka process roles
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      # Kafka controller quorum voters
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+      # Kafka listeners
+      KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      # Kafka inter-broker listener name
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      # Kafka controller listener names
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      # Kafka log directories
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      # Kafka cluster ID
+      # Replace CLUSTER_ID with a unique base64 UUID using "bin/kafka-storage.sh random-uuid"
+      # See https://docs.confluent.io/kafka/operations-tools/kafka-tools.html#kafka-storage-sh
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.1
+    hostname: schema-registry
+    depends_on:
+      - broker
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
